@@ -2,6 +2,8 @@ const https = require("https");
 
 function EnviarMensajeWhastpapp(texto,number){
 
+    console.log(texto, number)
+
     texto = texto.toLowerCase();
 
     if (texto.includes("hola")){
