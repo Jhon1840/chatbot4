@@ -1,6 +1,7 @@
 const https = require("https");
+const { getChatGPTResponse } = require('./chatgpt');
 
-function EnviarMensajeWhastpapp(texto, number) {
+async function EnviarMensajeWhastpapp(texto, number) {
     try {
         console.log("Texto recibido:", texto);
         console.log("Número recibido:", number);
@@ -20,6 +21,33 @@ function EnviarMensajeWhastpapp(texto, number) {
                 }
             });
             console.log("Entro al 'hola':", data);
+        } else if (texto === "2") {
+            try {
+                const chatGPTResponse = await getChatGPTResponse('¿Qué es la Universidad del Valle?');
+                data = JSON.stringify({
+                    "messaging_product": "whatsapp",
+                    "recipient_type": "individual",
+                    "to": number,
+                    "type": "text",
+                    "text": {
+                        "preview_url": false,
+                        "body": chatGPTResponse
+                    }
+                });
+                console.log("Respuesta de ChatGPT:", chatGPTResponse);
+            } catch (error) {
+                console.error('Error al obtener la respuesta de ChatGPT:', error);
+                data = JSON.stringify({
+                    "messaging_product": "whatsapp",
+                    "recipient_type": "individual",
+                    "to": number,
+                    "type": "text",
+                    "text": {
+                        "preview_url": false,
+                        "body": "Lo siento, hubo un error al procesar tu solicitud."
+                    }
+                });
+            }
         } else {
             data = JSON.stringify({
                 "messaging_product": "whatsapp",
@@ -40,7 +68,7 @@ function EnviarMensajeWhastpapp(texto, number) {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "EAAkbIXWO5YYBOyPgeBdbAX5132Iz2Ct3CyBuhTebKzRFFRqTreiEJJuE1Q6OzdQVBKGsRJCowOLeJNwpE79J905TimokC79og48PoumALbWpe4hW6j6h2DWfDBSHgXhNxt1EftOdeYDhbsxdhGzyj5PNkZCfAnn7hcj977Ejr0k6qeEerGukMkfRtZBIjOYQZC6yHuJYXYEt89ZAaeOXIvqImEfDuW4ZBSfgZD"
+                Authorization: "Bearer EAAkbIXWO5YYBOyPgeBdbAX5132Iz2Ct3CyBuhTebKzRFFRqTreiEJJuE1Q6OzdQVBKGsRJCowOLeJNwpE79J905TimokC79og48PoumALbWpe4hW6j6h2DWfDBSHgXhNxt1EftOdeYDhbsxdhGzyj5PNkZCfAnn7hcj977Ejr0k6qeEerGukMkfRtZBIjOYQZC6yHuJYXYEt89ZAaeOXIvqImEfDuW4ZBSfgZD"
             }
         };
 
