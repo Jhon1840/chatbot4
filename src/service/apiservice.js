@@ -11,12 +11,6 @@ function limpiarTexto(texto) {
         .join(" ");
 }
 
-// Función para determinar si el texto está relacionado con la Universidad del Valle
-function esRelacionadoConUnivalle(texto) {
-    const palabrasClave = ["valle", "univalle", "universidad", "carreras", "inscripción", "admisión", "horarios"];
-    return palabrasClave.some(palabra => texto.includes(palabra));
-}
-
 // Función para determinar el contexto de la pregunta
 function obtenerContexto(texto) {
     if (/asesor(es)?/i.test(texto)) {
@@ -37,7 +31,7 @@ function obtenerContexto(texto) {
 // Función para manejar las respuestas predefinidas
 function manejarRespuestaPredefinida(texto) {
     if (/hola|buenos días|qué tal/i.test(texto)) {
-        return "¡Hola! Soy el asistente de la Universidad del Valle. ¿En qué puedo ayudarte?";
+        return "¡Hola! Soy el asistente de la universidad. ¿En qué puedo ayudarte?";
     }
     if (/asesor(es)?/i.test(texto)) {
         return "Nuestros asesores son: Juan Pérez (+591 12345678) y Ana López (+591 87654321). Contáctalos para más información.";
@@ -58,16 +52,8 @@ async function EnviarMensajeWhastpapp(texto, number) {
         console.log("Texto recibido:", texto);
         console.log("Número recibido:", number);
 
-        // Limpieza del texto
+        // Limpieza del texto y obtención del contexto
         const textoLimpio = limpiarTexto(texto);
-
-        // Verificar si la consulta está relacionada con la Universidad del Valle
-        if (!esRelacionadoConUnivalle(textoLimpio)) {
-            console.log("Consulta no relacionada con la Universidad del Valle. No se enviará respuesta.");
-            return; // Salir si no está relacionada
-        }
-
-        // Obtención del contexto
         const contexto = obtenerContexto(texto);
         let responseBody;
 
@@ -106,7 +92,7 @@ async function EnviarMensajeWhastpapp(texto, number) {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer EAAkbIXWO5YYBO5ZA21Fp4sdJyCiIY7M9os64wDFJy41RmkZBbv1ghYg5dmCDsd7MIjb8bF6m5BU7SFWJD2yXBXjRoGIxVPUgfcpJfmMZA4bMPBKODtG7gEOnjYwS55NdACyzeYwGI1XIqvwBUe7kJmDapHUaPg3rvoqTPQxINXgQ74zUJuVdEmv5VAuPzq17AZDZD"
+                Authorization: "Bearer EAAkbIXWO5YYBOx4TJZCkAppNCrOzBjVzBCIwYyxplrRcpAjuXhUlZCDUaJ5zTeZBKjOGWRAuDgPGj0vVKIBsF0yZBZCiaY7eAR1teqnswM9PkRJT0lCP5VS8x113HT0nFEkKZAtHfA83UqVm6LdXuuFmkwfDaU14KeAIBsZAfwTJN1SbfRChbNmbZCZBUZACCF1QeirVOEyhlzCwIslZBZCV7kX4X7AXGzy14nHN2rYZD"
             }
         };
 
