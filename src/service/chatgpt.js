@@ -1,28 +1,23 @@
+const OpenAI = require('openai');
 
-require('dotenv').config();
-const { Configuration, OpenAIApi } = require("openai");
-
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
 });
-const openai = new OpenAIApi(configuration);
 
-async function getCompletionFromOpenAI(prompt) {
+async function getChatGPTResponse(prompt) {
   try {
-    const response = await openai.createCompletion({
-      model: "text-davinci-002",
-      prompt,
-      temperature: 0.5,
-      max_tokens: 100,
-      top_p: 1,
-      frequency_penalty: 0.0,
-      presence_penalty: 0.0,
+    const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.7,
+      max_tokens: 50 
     });
-    return response.data.choices[0].text;
+    
+    return response.choices[0].message.content.trim();
   } catch (error) {
-    console.error("Error al obtener la respuesta de OpenAI:", error);
+    console.error('Error al obtener respuesta de ChatGPT:', error);
     throw error;
   }
 }
 
-module.exports = { getCompletionFromOpenAI };
+module.exports = { getChatGPTResponse };

@@ -1,15 +1,20 @@
-const express = require("express");
-const apiruta = require("./routes/ruta");
+    require('dotenv').config();
 
-const app = express();
+    const express = require("express");
+    const apiruta = require("./routes/ruta");
 
-const PORT = process.env.PORT || 8080;
+    const app = express();
 
-app.use(express.json());
+    const PORT = process.env.PORT || 8080;
 
-app.use("/api",apiruta);
+    app.use(express.json());
 
-app.listen(PORT,() => {
-    console.log("Hola AnderCode v1 el puerto es :" + PORT);
-})
+    app.use("/api",apiruta);
+
+    app.listen(PORT,() => {
+        console.log("Hola AnderCode v1 el puerto es :" + PORT);
+
+        console.log("API Key:", process.env.OPENAI_API_KEY);
+
+    })
 

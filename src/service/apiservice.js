@@ -6,93 +6,82 @@ async function EnviarMensajeWhastpapp(texto, number) {
         console.log("Texto recibido:", texto);
         console.log("Número recibido:", number);
 
-        texto = texto.toLowerCase();
-        let data;
+        // Obtener respuesta de ChatGPT para cualquier mensaje
+        try {
+            const chatGPTResponse = await getChatGPTResponse(texto);
+            
+            const data = JSON.stringify({
+                "messaging_product": "whatsapp",
+                "recipient_type": "individual",
+                "to": number,
+                "type": "text",
+                "text": {
+                    "preview_url": false,
+                    "body": chatGPTResponse
+                }
+            });
 
-        if (texto.includes("hola")) {
-            data = JSON.stringify({
+            console.log("Respuesta de ChatGPT:", chatGPTResponse);
+
+            const options = {
+                host: "graph.facebook.com",
+                path: "/v21.0/462549556950259/messages",
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer EAAkbIXWO5YYBOyPgeBdbAX5132Iz2Ct3CyBuhTebKzRFFRqTreiEJJuE1Q6OzdQVBKGsRJCowOLeJNwpE79J905TimokC79og48PoumALbWpe4hW6j6h2DWfDBSHgXhNxt1EftOdeYDhbsxdhGzyj5PNkZCfAnn7hcj977Ejr0k6qeEerGukMkfRtZBIjOYQZC6yHuJYXYEt89ZAaeOXIvqImEfDuW4ZBSfgZD"
+                }
+            };
+
+            const req = https.request(options, res => {
+                console.log("Estado de la respuesta:", res.statusCode);
+
+                res.on("data", d => {
+                    console.log("Datos de respuesta:", d.toString());
+                });
+
+                res.on("end", () => {
+                    console.log("Respuesta completada.");
+                });
+            });
+
+            req.on("error", error => {
+                console.error("Error al enviar la solicitud HTTPS:", error);
+            });
+
+            req.write(data);
+            console.log("Datos enviados:", data);
+            req.end();
+
+        } catch (error) {
+            console.error('Error al obtener la respuesta de ChatGPT:', error);
+            
+            const errorData = JSON.stringify({
                 "messaging_product": "whatsapp",
                 "recipient_type": "individual",
                 "to": number,
                 "type": "text",
                 "text": {
                     "preview_url": false,
-                    "body": "🚀 Hola, Como estas, Bienvenido."
+                    "body": "Lo siento, hubo un error al procesar tu solicitud."
                 }
             });
-            console.log("Entro al 'hola':", data);
-        } else if (texto === "2") {
-            try {
-                const chatGPTResponse = await getChatGPTResponse('¿Qué es la Universidad del Valle?');
-                data = JSON.stringify({
-                    "messaging_product": "whatsapp",
-                    "recipient_type": "individual",
-                    "to": number,
-                    "type": "text",
-                    "text": {
-                        "preview_url": false,
-                        "body": chatGPTResponse
-                    }
-                });
-                console.log("Respuesta de ChatGPT:", chatGPTResponse);
-            } catch (error) {
-                console.error('Error al obtener la respuesta de ChatGPT:', error);
-                data = JSON.stringify({
-                    "messaging_product": "whatsapp",
-                    "recipient_type": "individual",
-                    "to": number,
-                    "type": "text",
-                    "text": {
-                        "preview_url": false,
-                        "body": "Lo siento, hubo un error al procesar tu solicitud."
-                    }
-                });
-            }
-        } else {
-            data = JSON.stringify({
-                "messaging_product": "whatsapp",
-                "recipient_type": "individual",
-                "to": number,
-                "type": "text",
-                "text": {
-                    "preview_url": false,
-                    "body": "🚀 Hola, ingresa un número válido para más información."
+
+            // Enviar mensaje de error
+            const options = {
+                host: "graph.facebook.com",
+                path: "/v21.0/462549556950259/messages",
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer EAAkbIXWO5YYBOyPgeBdbAX5132Iz2Ct3CyBuhTebKzRFFRqTreiEJJuE1Q6OzdQVBKGsRJCowOLeJNwpE79J905TimokC79og48PoumALbWpe4hW6j6h2DWfDBSHgXhNxt1EftOdeYDhbsxdhGzyj5PNkZCfAnn7hcj977Ejr0k6qeEerGukMkfRtZBIjOYQZC6yHuJYXYEt89ZAaeOXIvqImEfDuW4ZBSfgZD"
                 }
-            });
-            console.log("Mensaje predeterminado:", data);
+            };
+
+            const req = https.request(options);
+            req.write(errorData);
+            req.end();
         }
-
-        const options = {
-            host: "graph.facebook.com",
-            path: "/v21.0/462549556950259/messages",
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: "Bearer EAAkbIXWO5YYBOyPgeBdbAX5132Iz2Ct3CyBuhTebKzRFFRqTreiEJJuE1Q6OzdQVBKGsRJCowOLeJNwpE79J905TimokC79og48PoumALbWpe4hW6j6h2DWfDBSHgXhNxt1EftOdeYDhbsxdhGzyj5PNkZCfAnn7hcj977Ejr0k6qeEerGukMkfRtZBIjOYQZC6yHuJYXYEt89ZAaeOXIvqImEfDuW4ZBSfgZD"
-            }
-        };
-
-        console.log("Opciones de solicitud:", options);
-
-        const req = https.request(options, res => {
-            console.log("Estado de la respuesta:", res.statusCode);
-
-            res.on("data", d => {
-                console.log("Datos de respuesta:", d.toString());
-            });
-
-            res.on("end", () => {
-                console.log("Respuesta completada.");
-            });
-        });
-
-        req.on("error", error => {
-            console.error("Error al enviar la solicitud HTTPS:", error);
-        });
-
-        req.write(data);
-        console.log("Datos enviados:", data);
-        req.end();
 
     } catch (error) {
         console.error("Error en EnviarMensajeWhastpapp:", error);
