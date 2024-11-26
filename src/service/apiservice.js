@@ -3,7 +3,6 @@ const { getChatGPTResponse } = require('./chatgpt');
 
 async function EnviarMensajeWhastpapp(texto, number) {
     try {
-        // Validaciones iniciales
         if (!texto || !number) {
             throw new Error("Texto o número de destinatario inválido");
         }
@@ -14,14 +13,11 @@ async function EnviarMensajeWhastpapp(texto, number) {
         let responseBody;
 
         try {
-            // Validar longitud del mensaje
             if (texto.length > 1000) {
                 responseBody = "Lo siento, el mensaje es demasiado largo. Por favor, envía un mensaje más corto.";
             } else {
-                // Obtener respuesta de ChatGPT
                 const chatGPTResponse = await getChatGPTResponse(texto);
                 
-                // Validar respuesta de ChatGPT
                 if (!chatGPTResponse) {
                     throw new Error("Respuesta de ChatGPT vacía");
                 }
@@ -29,10 +25,8 @@ async function EnviarMensajeWhastpapp(texto, number) {
                 responseBody = chatGPTResponse;
             }
         } catch (chatGPTError) {
-            // Manejo de errores específicos de ChatGPT
             console.error('Error de ChatGPT:', chatGPTError);
             
-            // Diferentes mensajes según el tipo de error
             if (chatGPTError.message.includes("API key")) {
                 responseBody = "Disculpa, hay un problema con la configuración del servicio. Estamos trabajando para solucionarlo.";
             } else if (chatGPTError.message.includes("connection")) {
@@ -42,7 +36,6 @@ async function EnviarMensajeWhastpapp(texto, number) {
             }
         }
 
-        // Preparar datos para enviar a WhatsApp
         const data = JSON.stringify({
             "messaging_product": "whatsapp",
             "recipient_type": "individual",
@@ -54,18 +47,16 @@ async function EnviarMensajeWhastpapp(texto, number) {
             }
         });
 
-        // Configurar opciones de solicitud
         const options = {
             host: "graph.facebook.com",
             path: "/v21.0/462549556950259/messages",
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization :"Bearer EAAkbIXWO5YYBOx4TJZCkAppNCrOzBjVzBCIwYyxplrRcpAjuXhUlZCDUaJ5zTeZBKjOGWRAuDgPGj0vVKIBsF0yZBZCiaY7eAR1teqnswM9PkRJT0lCP5VS8x113HT0nFEkKZAtHfA83UqVm6LdXuuFmkwfDaU14KeAIBsZAfwTJN1SbfRChbNmbZCZBUZACCF1QeirVOEyhlzCwIslZBZCV7kX4X7AXGzy14nHN2rYZD"
+                Authorization :"Bearer EAAkbIXWO5YYBO5ZA21Fp4sdJyCiIY7M9os64wDFJy41RmkZBbv1ghYg5dmCDsd7MIjb8bF6m5BU7SFWJD2yXBXjRoGIxVPUgfcpJfmMZA4bMPBKODtG7gEOnjYwS55NdACyzeYwGI1XIqvwBUe7kJmDapHUaPg3rvoqTPQxINXgQ74zUJuVdEmv5VAuPzq17AZDZD"
             }
         };
 
-        // Enviar solicitud a WhatsApp
         await new Promise((resolve, reject) => {
             const req = https.request(options, res => {
                 let responseData = '';
@@ -98,10 +89,8 @@ async function EnviarMensajeWhastpapp(texto, number) {
         console.log("Mensaje enviado exitosamente");
 
     } catch (globalError) {
-        // Manejo de errores globales
         console.error("Error global en EnviarMensajeWhastpapp:", globalError);
 
-        // Opcional: Enviar mensaje de error al usuario
         try {
             const errorData = JSON.stringify({
                 "messaging_product": "whatsapp",
