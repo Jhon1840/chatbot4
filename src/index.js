@@ -14,7 +14,6 @@
     app.listen(PORT,() => {
         console.log("Hola AnderCode v1 el puerto es :" + PORT);
 
-        console.log("API Key:", process.env.OPENAI_API_KEY);
 
     })
 
