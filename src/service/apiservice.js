@@ -29,7 +29,7 @@ async function EnviarMensajeWhastpapp(texto, number) {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: "Bearer EAAkbIXWO5YYBOyPgeBdbAX5132Iz2Ct3CyBuhTebKzRFFRqTreiEJJuE1Q6OzdQVBKGsRJCowOLeJNwpE79J905TimokC79og48PoumALbWpe4hW6j6h2DWfDBSHgXhNxt1EftOdeYDhbsxdhGzyj5PNkZCfAnn7hcj977Ejr0k6qeEerGukMkfRtZBIjOYQZC6yHuJYXYEt89ZAaeOXIvqImEfDuW4ZBSfgZD"
+                    Authorization: "Bearer EAAkbIXWO5YYBO4ks1jWmaZBP5YpqUIMBB9uIZCAWsnV4rOiuQIZCL2m18YwVZAQP2vE3DOZCNoJCzvgoYTLhcGR1dRS97nND4VyQGyP1LLhHnbNUHIbuAIYEyloXZAa8ZAAxPKbngcRToe5GMcSXnyzYxZB5q5oSxS1x073hd5LZBEAr9VNmPM1XcXegPhLwSMHgI4XO3avaO1ZCNU8Uc743YISJiy09ZApDbwDq7IZD"
                 }
             };
 
