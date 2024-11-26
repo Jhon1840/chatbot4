@@ -120,7 +120,7 @@ async function EnviarMensajeWhastpapp(texto, number) {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization :"Bearer EAAkbIXWO5YYBO4ks1jWmaZBP5YpqUIMBB9uIZCAWsnV4rOiuQIZCL2m18YwVZAQP2vE3DOZCNoJCzvgoYTLhcGR1dRS97nND4VyQGyP1LLhHnbNUHIbuAIYEyloXZAa8ZAAxPKbngcRToe5GMcSXnyzYxZB5q5oSxS1x073hd5LZBEAr9VNmPM1XcXegPhLwSMHgI4XO3avaO1ZCNU8Uc743YISJiy09ZApDbwDq7IZD"
+                    Authorization :"Bearer EAAkbIXWO5YYBOx4TJZCkAppNCrOzBjVzBCIwYyxplrRcpAjuXhUlZCDUaJ5zTeZBKjOGWRAuDgPGj0vVKIBsF0yZBZCiaY7eAR1teqnswM9PkRJT0lCP5VS8x113HT0nFEkKZAtHfA83UqVm6LdXuuFmkwfDaU14KeAIBsZAfwTJN1SbfRChbNmbZCZBUZACCF1QeirVOEyhlzCwIslZBZCV7kX4X7AXGzy14nHN2rYZD"
                 }
             };
 
