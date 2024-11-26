@@ -17,7 +17,7 @@ async function getChatGPTResponse(prompt) {
       model: "gpt-3.5-turbo",
       messages: [systemMessage, userMessage],
       temperature: 0.7,
-      max_tokens: 50
+      
     });
 
     return response.choices[0].message.content.trim();

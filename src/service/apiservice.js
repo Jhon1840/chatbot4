@@ -28,10 +28,10 @@ function obtenerContexto(texto) {
 
 function manejarRespuestaPredefinida(texto) {
     if (/hola|buenos días|qué tal/i.test(texto)) {
-        return "¡Hola! Soy el asistente de la universidad. ¿En qué puedo ayudarte?";
+        return "¡Hola! Soy el asistente de la universidad del valle. ¿En qué puedo ayudarte?";
     }
     if (/asesor(es)?/i.test(texto)) {
-        return "Nuestros asesores son: Juan Pérez (+591 12345678) y Ana López (+591 87654321). Contáctalos para más información.";
+        return "Nuestros asesozres son: Juan Pérez (+591 12345678) y Ana López (+591 87654321). Contáctalos para más información.";
     }
     if (/precio|costo|tarifa/i.test(texto)) {
         return "Para conocer precios o tarifas, por favor contacta a nuestros asesores: Juan Pérez (+591 12345678).";
