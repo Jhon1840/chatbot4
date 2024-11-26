@@ -1,7 +1,6 @@
 const https = require("https");
 const { getChatGPTResponse } = require('./chatgpt');
 
-// Función para limpiar el texto del usuario
 function limpiarTexto(texto) {
     const stopWords = ["de", "la", "y", "a", "el", "en", "por", "con", "que", "un", "una", "los", "las", "para", "del"];
     return texto
@@ -11,7 +10,6 @@ function limpiarTexto(texto) {
         .join(" ");
 }
 
-// Función para determinar el contexto de la pregunta
 function obtenerContexto(texto) {
     if (/asesor(es)?/i.test(texto)) {
         return "Consulta sobre asesores universitarios. Responde con información de contacto.";
@@ -28,7 +26,6 @@ function obtenerContexto(texto) {
     return "Consulta desconocida.";
 }
 
-// Función para manejar las respuestas predefinidas
 function manejarRespuestaPredefinida(texto) {
     if (/hola|buenos días|qué tal/i.test(texto)) {
         return "¡Hola! Soy el asistente de la universidad. ¿En qué puedo ayudarte?";
@@ -42,7 +39,6 @@ function manejarRespuestaPredefinida(texto) {
     return null;
 }
 
-// Función principal para enviar el mensaje
 async function EnviarMensajeWhastpapp(texto, number) {
     try {
         if (!texto || !number) {
@@ -52,17 +48,14 @@ async function EnviarMensajeWhastpapp(texto, number) {
         console.log("Texto recibido:", texto);
         console.log("Número recibido:", number);
 
-        // Limpieza del texto y obtención del contexto
         const textoLimpio = limpiarTexto(texto);
         const contexto = obtenerContexto(texto);
         let responseBody;
 
-        // Verificar si hay una respuesta predefinida
         const respuestaPredefinida = manejarRespuestaPredefinida(textoLimpio);
         if (respuestaPredefinida) {
             responseBody = respuestaPredefinida;
         } else {
-            // Si no hay respuesta predefinida, llamar a la API de ChatGPT
             try {
                 responseBody = await getChatGPTResponse(`${textoLimpio} \n Contexto: ${contexto}`);
                 if (!responseBody) {
@@ -74,7 +67,6 @@ async function EnviarMensajeWhastpapp(texto, number) {
             }
         }
 
-        // Datos para el envío del mensaje a WhatsApp
         const data = JSON.stringify({
             "messaging_product": "whatsapp",
             "recipient_type": "individual",
@@ -96,7 +88,6 @@ async function EnviarMensajeWhastpapp(texto, number) {
             }
         };
 
-        // Enviar el mensaje
         await new Promise((resolve, reject) => {
             const req = https.request(options, res => {
                 let responseData = '';
