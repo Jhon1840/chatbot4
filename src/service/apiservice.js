@@ -93,6 +93,59 @@ ${materias.map(m => `- ${m.nombre} (${m.creditos} créditos)`).join('\n')}`
     }
 }
 
+// Nueva función para consultar materias por carrera
+async function consultarMateriasPorCarrera(nombreCarrera) {
+    try {
+        // Buscar la carrera por nombre (ignorando mayúsculas/minúsculas)
+        const carrera = await Carrera.findOne({
+            where: sequelize.where(
+                sequelize.fn('LOWER', sequelize.col('nombre')), 
+                nombreCarrera.toLowerCase()
+            )
+        });
+
+        if (!carrera) {
+            console.log(`No se encontró la carrera de ${nombreCarrera}`);
+            return null;
+        }
+
+        // Buscar todas las materias de esta carrera
+        const materias = await Materia.findAll({
+            where: {
+                CarreraId: carrera.id
+            },
+            order: [['semestre', 'ASC'], ['nombre', 'ASC']]
+        });
+
+        // Organizar materias por semestre
+        const materiasPorSemestre = {};
+        materias.forEach(materia => {
+            if (!materiasPorSemestre[materia.semestre]) {
+                materiasPorSemestre[materia.semestre] = [];
+            }
+            materiasPorSemestre[materia.semestre].push({
+                nombre: materia.nombre,
+                creditos: materia.creditos
+            });
+        });
+
+        // Generar un string descriptivo de las materias
+        let descripcionMaterias = `Materias de la Carrera de ${nombreCarrera}:\n`;
+        
+        Object.keys(materiasPorSemestre).forEach(semestre => {
+            descripcionMaterias += `\nSemestre ${semestre}:\n`;
+            materiasPorSemestre[semestre].forEach(materia => {
+                descripcionMaterias += `- ${materia.nombre} (${materia.creditos} créditos)\n`;
+            });
+        });
+
+        return descripcionMaterias;
+    } catch (error) {
+        console.error(`Error al consultar las materias de ${nombreCarrera}:`, error);
+        return null;
+    }
+}
+
 async function EnviarMensajeWhastpapp(texto, number) {
     try {
         if (!texto || !number) {
@@ -114,12 +167,33 @@ async function EnviarMensajeWhastpapp(texto, number) {
             new RegExp(carrera, 'i').test(texto)
         );
 
+        // Detectar consultas de materias
+        const consultasMaterias = {
+            'materias de psicología': 'Psicología',
+            'malla curricular de psicología': 'Psicología',
+            'materias de derecho': 'Derecho',
+            'malla curricular de derecho': 'Derecho',
+            'materias de medicina': 'Medicina', 
+            'malla curricular de medicina': 'Medicina',
+            'materias de ingeniería de sistemas': 'Ingeniería de Sistemas',
+            'malla curricular de ingeniería de sistemas': 'Ingeniería de Sistemas'
+        };
+
+        const consultaMateria = Object.keys(consultasMaterias).find(consulta => 
+            new RegExp(consulta, 'i').test(texto.toLowerCase())
+        );
+
         const respuestaPredefinida = manejarRespuestaPredefinida(textoLimpio);
         if (respuestaPredefinida) {
             responseBody = respuestaPredefinida;
         } else {
             try {
-                if (carreraDetectada) {
+                if (consultaMateria) {
+                    const carrera = consultasMaterias[consultaMateria];
+                    const infoMaterias = await consultarMateriasPorCarrera(carrera);
+                    
+                    responseBody = infoMaterias || "Lo siento, no pude encontrar la información de materias para esta carrera.";
+                } else if (carreraDetectada) {
                     const infoCarrera = await buscarInformacionCarrera(carreraDetectada);
                     
                     responseBody = await getChatGPTResponse(
