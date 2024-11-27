@@ -47,10 +47,8 @@ function manejarRespuestaPredefinida(texto) {
     return null;
 }
 
-// Nueva función para buscar información de carreras
 async function buscarInformacionCarrera(nombreCarrera) {
     try {
-        // Buscar la carrera por nombre (ignorando mayúsculas/minúsculas)
         const carrera = await Carrera.findOne({
             where: sequelize.where(
                 sequelize.fn('LOWER', sequelize.col('nombre')), 
@@ -67,7 +65,6 @@ async function buscarInformacionCarrera(nombreCarrera) {
 
         if (!carrera) return null;
 
-        // Organizar materias por semestre
         const materiasPorSemestre = {};
         carrera.mallaCurricular.forEach(materia => {
             if (!materiasPorSemestre[materia.semestre]) {
@@ -79,7 +76,6 @@ async function buscarInformacionCarrera(nombreCarrera) {
             });
         });
 
-        // Crear un string descriptivo de la carrera
         let descripcionCarrera = `
 Carrera: ${carrera.nombre}
 
@@ -99,10 +95,8 @@ ${materias.map(m => `- ${m.nombre} (${m.creditos} créditos)`).join('\n')}`
     }
 }
 
-// Nueva función para consultar materias por carrera
 async function consultarMateriasPorCarrera(nombreCarrera) {
     try {
-        // Buscar la carrera por nombre (ignorando mayúsculas/minúsculas)
         const carrera = await Carrera.findOne({
             where: sequelize.where(
                 sequelize.fn('LOWER', sequelize.col('nombre')), 
@@ -135,7 +129,6 @@ async function consultarMateriasPorCarrera(nombreCarrera) {
             });
         });
 
-        // Generar un string descriptivo de las materias
         let descripcionMaterias = `Materias de la Carrera de ${nombreCarrera}:\n`;
         
         Object.keys(materiasPorSemestre).forEach(semestre => {
