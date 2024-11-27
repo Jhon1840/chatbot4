@@ -22,6 +22,8 @@ function obtenerContexto(texto) {
     if (/hola|buenos días|qué tal/i.test(texto)) {
         return "Saludo inicial.";
     }
+
+    
     if (/universidad/i.test(texto)) {
         return "Consulta general sobre la universidad.";
     }
@@ -37,6 +39,10 @@ function manejarRespuestaPredefinida(texto) {
     }
     if (/precio|costo|tarifa/i.test(texto)) {
         return "Para conocer precios o tarifas, por favor contacta a nuestros asesores: Juan Pérez (+591 12345678).";
+    }
+
+    if (/ubicación|dirección|dónde está|ubicado/i.test(texto)) {
+        return "Nuestra ubicación es: Campus Univalle Séptimo Anillo, Santa Cruz de la Sierra. Estamos ubicados en un lugar estratégico y de fácil acceso.";
     }
     return null;
 }
