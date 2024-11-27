@@ -1,3 +1,5 @@
+const { Carrera, Materia, sequelize } = require('../db'); 
+
 const https = require("https");
 const { getChatGPTResponse } = require('./chatgpt');
 
@@ -31,12 +33,64 @@ function manejarRespuestaPredefinida(texto) {
         return "¡Hola! Soy el asistente de la universidad del valle. ¿En qué puedo ayudarte?";
     }
     if (/asesor(es)?/i.test(texto)) {
-        return "Nuestros asesozres son: Juan Pérez (+591 12345678) y Ana López (+591 87654321). Contáctalos para más información.";
+        return "Nuestros asesores son: Juan Pérez (+591 12345678) y Ana López (+591 87654321). Contáctalos para más información.";
     }
     if (/precio|costo|tarifa/i.test(texto)) {
         return "Para conocer precios o tarifas, por favor contacta a nuestros asesores: Juan Pérez (+591 12345678).";
     }
     return null;
+}
+
+// Nueva función para buscar información de carreras
+async function buscarInformacionCarrera(nombreCarrera) {
+    try {
+        // Buscar la carrera por nombre (ignorando mayúsculas/minúsculas)
+        const carrera = await Carrera.findOne({
+            where: sequelize.where(
+                sequelize.fn('LOWER', sequelize.col('nombre')), 
+                nombreCarrera.toLowerCase()
+            ),
+            include: [
+                {
+                    model: Materia,
+                    as: 'mallaCurricular',
+                    attributes: ['nombre', 'semestre', 'creditos']
+                }
+            ]
+        });
+
+        if (!carrera) return null;
+
+        // Organizar materias por semestre
+        const materiasPorSemestre = {};
+        carrera.mallaCurricular.forEach(materia => {
+            if (!materiasPorSemestre[materia.semestre]) {
+                materiasPorSemestre[materia.semestre] = [];
+            }
+            materiasPorSemestre[materia.semestre].push({
+                nombre: materia.nombre,
+                creditos: materia.creditos
+            });
+        });
+
+        // Crear un string descriptivo de la carrera
+        let descripcionCarrera = `
+Carrera: ${carrera.nombre}
+
+Descripción: ${carrera.descripcion}
+
+Malla Curricular:
+${Object.entries(materiasPorSemestre).map(([semestre, materias]) => 
+    `Semestre ${semestre}:
+${materias.map(m => `- ${m.nombre} (${m.creditos} créditos)`).join('\n')}`
+).join('\n\n')}
+        `;
+
+        return descripcionCarrera;
+    } catch (error) {
+        console.error("Error buscando información de carrera:", error);
+        return null;
+    }
 }
 
 async function EnviarMensajeWhastpapp(texto, number) {
@@ -52,12 +106,30 @@ async function EnviarMensajeWhastpapp(texto, number) {
         const contexto = obtenerContexto(texto);
         let responseBody;
 
+        // Definir nombres de carreras a detectar
+        const carreras = ['Psicología', 'Derecho', 'Medicina', 'Ingeniería de Sistemas'];
+        
+        // Verificar si el mensaje menciona alguna carrera
+        const carreraDetectada = carreras.find(carrera => 
+            new RegExp(carrera, 'i').test(texto)
+        );
+
         const respuestaPredefinida = manejarRespuestaPredefinida(textoLimpio);
         if (respuestaPredefinida) {
             responseBody = respuestaPredefinida;
         } else {
             try {
-                responseBody = await getChatGPTResponse(`${textoLimpio} \n Contexto: ${contexto}`);
+                if (carreraDetectada) {
+                    const infoCarrera = await buscarInformacionCarrera(carreraDetectada);
+                    
+                    responseBody = await getChatGPTResponse(
+                        `Texto del usuario: ${texto}\n\nInformación de la carrera:\n${infoCarrera}\n\nContexto: ${contexto}. Genera una respuesta útil y amigable basada en la consulta del usuario.`
+                    );
+                } else {
+                    // Consulta normal sin carrera detectada
+                    responseBody = await getChatGPTResponse(`${textoLimpio} \n Contexto: ${contexto}`);
+                }
+
                 if (!responseBody) {
                     throw new Error("Respuesta de ChatGPT vacía");
                 }
