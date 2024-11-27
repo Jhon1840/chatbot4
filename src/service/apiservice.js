@@ -159,15 +159,12 @@ async function EnviarMensajeWhastpapp(texto, number) {
         const contexto = obtenerContexto(texto);
         let responseBody;
 
-        // Definir nombres de carreras a detectar
         const carreras = ['Psicología', 'Derecho', 'Medicina', 'Ingeniería de Sistemas'];
         
-        // Verificar si el mensaje menciona alguna carrera
         const carreraDetectada = carreras.find(carrera => 
             new RegExp(carrera, 'i').test(texto)
         );
 
-        // Detectar consultas de materias
         const consultasMaterias = {
             'materias de psicología': 'Psicología',
             'malla curricular de psicología': 'Psicología',
