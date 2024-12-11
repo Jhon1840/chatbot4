@@ -38,8 +38,8 @@ function manejarRespuestaPredefinida(texto) {
         return "Nuestros asesores son: Juan Pérez (+591 12345678) y Ana López (+591 87654321). Contáctalos para más información.";
     }
     if (/precio|costo|tarifa/i.test(texto)) {
-        return "Para conocer precios o tarifas, por favor contacta a nuestros asesores: Juan Pérez (+591 12345678).";
-    }
+        return "¡Hola! 😊 Para obtener información detallada sobre precios, costos o tarifas, no dudes en contactar a uno de nuestros asesores especializados. Puedes comunicarte con Juan Pérez al número 📞 +591 12345678. ¡Estaremos encantados de ayudarte! 💬";
+    }    
     if (/ubicación|ubicacion|dirección|direccion|dónde\s*está|donde\s*esta|ubicado|donde\s*queda|dónde\s*queda/i.test(texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, ""))) {
         return "Nuestra ubicación es: Campus Univalle, Séptimo Anillo, Santa Cruz de la Sierra. " +
             "Puedes encontrarnos en este enlace de Google Maps: https://maps.app.goo.gl/4oUDa8G5otWjiwuk7";
