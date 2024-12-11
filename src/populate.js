@@ -26,7 +26,6 @@ const { sequelize, Carrera, Materia } = require('./db');
             descripcion: 'Carrera enfocada en el desarrollo de software y sistemas computacionales.',
         });
 
-        // Crear materias para Psicología
         await Materia.bulkCreate([
             // Primer semestre
             { nombre: 'ANTROPOLOGÍA SOCIOECONÓMICA BOL.', creditos: 4, semestre: 1, CarreraId: psicologia.id },
